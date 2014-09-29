@@ -178,10 +178,10 @@ class Snake
 
 int main()
 {
-	//Snake saap;
-	//saap.snakeInit();
-//	Direction direction=RIGHT;
-//	saap.snakeMove(3,2,direction);
+	Snake saap;
+	saap.snakeInit();
+Direction direction=RIGHT;
+saap.snakeMove(3,2,direction);
 
 
 	
