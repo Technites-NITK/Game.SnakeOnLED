@@ -1,24 +1,51 @@
 #include<iostream>
+#include<cstdlib>
+#include<windows.h>
 #include<queue>
 using namespace std;
 
 enum Direction {RIGHT,LEFT,UP,DOWN};
-//
+
 class Snake
 {
 	queue<int> SnakeSegment;
 
 	Direction direction;
 	int head,length;
-	int face[8][32];
+ int face[8][32];
 	
-  bool isColliding()
+  bool isColliding(int head_x,int head_y)
   {
-  	if(head==1)
-  	return true;
-  	
-  	else
-  	return false;
+  
+         if(direction==RIGHT)
+         {
+          if(face[head_x+1][head_y]==1)
+		  return true;
+		  else
+		  return false;	
+         }
+		 if(direction==LEFT)
+		 {
+		 	if(face[head_x-1][head_y]==1)
+		  return true;
+		  else
+		  return false;
+		 }
+		 if(direction==UP)
+		 {
+		 	if(face[head_x][head_y-1]==1)
+		  return true;
+		  else
+		  return false;
+		 }
+		 if(direction==DOWN)
+		 {
+		 	if(face[head_x][head_y+1]==1)
+		  return true;
+		  else
+		  return false;
+		 } 
+    	
   }	
   
   
@@ -32,7 +59,7 @@ class Snake
   
   bool hasEaten()
   {
-  	if(head==2)
+  	if(SnakeSegment.back()==2)
   	return true;
   	else
   	return false;
@@ -41,15 +68,77 @@ class Snake
   
  public: void snakeInit()
   {
-  	SnakeSegment.push(face[3][0]);
+  	int x,y;
+  	
+	  x=rand()%30,y=rand()%6;
+  	  
+  	SnakeSegment.push(face[x][y]);
   	SnakeSegment.back()=1;
-  	SnakeSegment.push(face[3][1]);
-  	SnakeSegment.back()=1;
-  	SnakeSegment.push(face[3][2]);
-  	SnakeSegment.back()=1;
+  	direction=static_cast <Direction>(rand()%4);
+  	
+  	switch(direction)
+	  {
+	  		case UP:
+		   
+		
+			SnakeSegment.push(face[x][y-1]);
+			SnakeSegment.back()=1;
+			SnakeSegment.push(face[x][y-2]);
+			SnakeSegment.back()=1;			
+		 
+		
+			break;
+		
+		
+		case DOWN:
+		     
+	
+			SnakeSegment.push(face[x][y+1]);
+			SnakeSegment.back()=1;
+			SnakeSegment.push(face[x][y+2]);
+			SnakeSegment.back()=1;
+		
+		
+		
+		
+		break;
+		
+		
+		case RIGHT:
+		     
+	
+			SnakeSegment.push(face[x+1][y]);
+			SnakeSegment.back()=1;
+			SnakeSegment.push(face[x+2][y]);
+			SnakeSegment.back()=1;
+		
+		
+	
+		break;
+		
+		case LEFT:
+		 
+			SnakeSegment.push(face[x-1][y]);
+			SnakeSegment.back()=1;
+			SnakeSegment.push(face[x-2][y]);
+			SnakeSegment.back()=1;
+		
+	
+		break;
+    
+	  	
+	  }
+  
   	length=3;
-  	direction=RIGHT;
   	head=SnakeSegment.back();
+  	if(direction==RIGHT)
+  	snakeMove(x+2,y,RIGHT);
+  	else if(direction==LEFT)
+  	snakeMove(x-2,y,LEFT);
+  	else if(direction==UP)
+  	snakeMove(x,y-2,UP);
+  	else if(direction==DOWN)
+  	snakeMove(x,y+2,DOWN);
   }
   
   void getInput(int head_x)
@@ -84,104 +173,146 @@ class Snake
   	while(go)
   	{
   		
+  	
+Sleep ( 1000 );
   		
-  		
-  	if(isColliding()||(head_y==0&&direction==UP)||(head_y==8&&direction==DOWN))
+  
+  	
+  	getInput(head_x);
+  	
+  		if(isColliding(head_x,head_y)||(head_y==0&&direction==UP)||(head_y==8&&direction==DOWN))
   	{
   		cout<<"game over";
   		go=false;
   		break;
   	}
   	
-  	getInput(head_x);
-  	
     switch(direction)
     {
     	case UP:
-		   if(direction != DOWN && !hasEaten())
+		   if(direction != DOWN )
 		{
+			
 			SnakeSegment.push(face[head_x][head_y-1]);
+			
+			if(!hasEaten())
+			{
 			SnakeSegment.back()=1;
 			SnakeSegment.front()=0;
 			SnakeSegment.pop();
-		} 
+	        }
 		
-		else if (direction !=DOWN && hasEaten())
+		else
 		{
 			SnakeSegment.push(face[head_x][head_y-1]);
 			SnakeSegment.back()=1;
 		}
-		
+	}
 		head_y=head_y-1;
 		break;
 		
 		
 		case DOWN:
-		      if(direction != UP && !hasEaten())
+			
+		      if(direction != UP)
 		{
 			SnakeSegment.push(face[head_x][head_y+1]);
+			if(!hasEaten())
+			{
 			SnakeSegment.back()=1;
 			SnakeSegment.front()=0;
 			SnakeSegment.pop();
-		} 
+		   }
+		  
+		   
 		
-		else if (direction !=UP && !hasEaten())
+		else
 		{
 			SnakeSegment.push(face[head_x][head_y+1]);
 			SnakeSegment.back()=1;
 		}
+	  }
 		head_y=head_y+1;
 		break;
 		
 		
 		case RIGHT:
-		     if(direction != LEFT && !hasEaten())
+		     if(direction != LEFT)
 		{
-			SnakeSegment.push(face[head_x-1][head_y]);
+			if(head_x==31)
+			{
+				SnakeSegment.push(face[0][head_y]);
+			}
+			else 
+			{
+				SnakeSegment.push(face[head_x+1][head_y]);
+			}
+			if(!hasEaten())
+			{
 			SnakeSegment.back()=1;
 			SnakeSegment.front()=0;
 			SnakeSegment.pop();
-		} 
+		   }
+		 
 		
-		else if (direction !=LEFT && hasEaten())
+		else
 		{
-			SnakeSegment.push(face[head_x-1][head_y]);
+			
+			
 			SnakeSegment.back()=1;
 		}
+	}
 		head_x=head_x-1;
 		break;
 		
 		case LEFT:
-		  if(direction != RIGHT && !hasEaten())
+		  if(direction != RIGHT)
 		{
-			SnakeSegment.push(face[head_x+1][head_y]);
+				if(head_x==0)
+			{
+				SnakeSegment.push(face[31][head_y]);
+			}
+			else 
+			{
+				SnakeSegment.push(face[head_x-1][head_y]);
+			}
+			
+			if(!hasEaten())
+			{
+			
 			SnakeSegment.back()=1;
 			SnakeSegment.front()=0;
 			SnakeSegment.pop();
-		} 
+		    }
+		  
 		
-		else if (direction !=DOWN && hasEaten())
+		else
 		{
-			SnakeSegment.push(face[head_x+1][head_y]);
+			
+			
 			SnakeSegment.back()=1;
 		}
+	}
 		head_x=head_x+1;
 		break;
-    }
+    
     head=SnakeSegment.back();
     count++;
   	if(count%5==0)
   	fruit();
   }
 }
+}
 };
 
 int main()
 {
 	Snake saap;
+//	Direction direction;
+  //   int head_x,head_y;
 	saap.snakeInit();
-Direction direction=RIGHT;
-saap.snakeMove(3,2,direction);
+
+//saap.snakeMove(3,2,direction);
 
 
 	
