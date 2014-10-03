@@ -8,10 +8,11 @@ enum Direction {RIGHT,LEFT,UP,DOWN};
 
 class Snake
 {
-	queue<int> SnakeSegment;
+	queue<int*> SnakeSegment;
 
 	Direction direction;
-	int head,length;
+	int* head;
+	int length;
  int face[8][32];
 	
   bool isColliding(int head_x,int head_y)
@@ -59,7 +60,7 @@ class Snake
   
   bool hasEaten()
   {
-  	if(SnakeSegment.back()==2)
+  	if(*SnakeSegment.back()==2)
   	return true;
   	else
   	return false;
@@ -70,10 +71,16 @@ class Snake
   {
   	int x,y;
   	
+  	for(int i=0;i<8;i++)
+  	{
+  		for(int j=0;j<32;j++)
+  		face[i][j]=0;
+  	}
+  	
 	  x=rand()%30,y=rand()%6;
   	  
-  	SnakeSegment.push(face[x][y]);
-  	SnakeSegment.back()=1;
+  	SnakeSegment.push(&face[x][y]);
+  	*SnakeSegment.back()=1;
   	direction=static_cast <Direction>(rand()%4);
   	
   	switch(direction)
@@ -81,10 +88,10 @@ class Snake
 	  		case UP:
 		   
 		
-			SnakeSegment.push(face[x][y-1]);
-			SnakeSegment.back()=1;
-			SnakeSegment.push(face[x][y-2]);
-			SnakeSegment.back()=1;			
+			SnakeSegment.push(&face[x][y-1]);
+			*SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x][y-2]);
+			*SnakeSegment.back()=1;			
 		 
 		
 			break;
@@ -93,10 +100,10 @@ class Snake
 		case DOWN:
 		     
 	
-			SnakeSegment.push(face[x][y+1]);
-			SnakeSegment.back()=1;
-			SnakeSegment.push(face[x][y+2]);
-			SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x][y+1]);
+			*SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x][y+2]);
+			*SnakeSegment.back()=1;
 		
 		
 		
@@ -107,10 +114,10 @@ class Snake
 		case RIGHT:
 		     
 	
-			SnakeSegment.push(face[x+1][y]);
-			SnakeSegment.back()=1;
-			SnakeSegment.push(face[x+2][y]);
-			SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x+1][y]);
+			*SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x+2][y]);
+			*SnakeSegment.back()=1;
 		
 		
 	
@@ -118,10 +125,10 @@ class Snake
 		
 		case LEFT:
 		 
-			SnakeSegment.push(face[x-1][y]);
-			SnakeSegment.back()=1;
-			SnakeSegment.push(face[x-2][y]);
-			SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x-1][y]);
+			*SnakeSegment.back()=1;
+			SnakeSegment.push(&face[x-2][y]);
+			*SnakeSegment.back()=1;
 		
 	
 		break;
@@ -158,7 +165,7 @@ class Snake
     	//player 3 control
     }
     
-    if(24<=head<=31)
+    if(24<=head_x<=31)
     {
     	//player 4 control
     }
@@ -193,19 +200,19 @@ Sleep ( 1000 );
 		   if(direction != DOWN )
 		{
 			
-			SnakeSegment.push(face[head_x][head_y-1]);
+			SnakeSegment.push(&face[head_x][head_y-1]);
 			
 			if(!hasEaten())
 			{
-			SnakeSegment.back()=1;
-			SnakeSegment.front()=0;
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
 			SnakeSegment.pop();
 	        }
 		
 		else
 		{
-			SnakeSegment.push(face[head_x][head_y-1]);
-			SnakeSegment.back()=1;
+			
+			*SnakeSegment.back()=1;
 		}
 	}
 		head_y=head_y-1;
@@ -216,11 +223,11 @@ Sleep ( 1000 );
 			
 		      if(direction != UP)
 		{
-			SnakeSegment.push(face[head_x][head_y+1]);
+			SnakeSegment.push(&face[head_x][head_y+1]);
 			if(!hasEaten())
 			{
-			SnakeSegment.back()=1;
-			SnakeSegment.front()=0;
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
 			SnakeSegment.pop();
 		   }
 		  
@@ -228,8 +235,8 @@ Sleep ( 1000 );
 		
 		else
 		{
-			SnakeSegment.push(face[head_x][head_y+1]);
-			SnakeSegment.back()=1;
+			
+			*SnakeSegment.back()=1;
 		}
 	  }
 		head_y=head_y+1;
@@ -241,16 +248,16 @@ Sleep ( 1000 );
 		{
 			if(head_x==31)
 			{
-				SnakeSegment.push(face[0][head_y]);
+				SnakeSegment.push(&face[0][head_y]);
 			}
 			else 
 			{
-				SnakeSegment.push(face[head_x+1][head_y]);
+				SnakeSegment.push(&face[head_x+1][head_y]);
 			}
 			if(!hasEaten())
 			{
-			SnakeSegment.back()=1;
-			SnakeSegment.front()=0;
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
 			SnakeSegment.pop();
 		   }
 		 
@@ -259,7 +266,7 @@ Sleep ( 1000 );
 		{
 			
 			
-			SnakeSegment.back()=1;
+			*SnakeSegment.back()=1;
 		}
 	}
 		head_x=head_x-1;
@@ -270,18 +277,18 @@ Sleep ( 1000 );
 		{
 				if(head_x==0)
 			{
-				SnakeSegment.push(face[31][head_y]);
+				SnakeSegment.push(&face[31][head_y]);
 			}
 			else 
 			{
-				SnakeSegment.push(face[head_x-1][head_y]);
+				SnakeSegment.push(&face[head_x-1][head_y]);
 			}
 			
 			if(!hasEaten())
 			{
 			
-			SnakeSegment.back()=1;
-			SnakeSegment.front()=0;
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
 			SnakeSegment.pop();
 		    }
 		  
@@ -290,7 +297,7 @@ Sleep ( 1000 );
 		{
 			
 			
-			SnakeSegment.back()=1;
+			*SnakeSegment.back()=1;
 		}
 	}
 		head_x=head_x+1;
