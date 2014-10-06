@@ -77,7 +77,7 @@ class Snake
   		face[i][j]=0;
   	}
   	
-	  x=rand()%30,y=rand()%6;
+	  x=(rand()%25)+3,y=(rand()%2)+3;
   	  
   	SnakeSegment.push(&face[x][y]);
   	*SnakeSegment.back()=1;
