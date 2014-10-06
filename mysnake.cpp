@@ -55,6 +55,9 @@ class Snake
   	int x,y;
   	x=rand()%32;
   	y=rand()%8;
+  	if(face[x][y]==1)
+  	void fruit();
+  	else
   	face[x][y]=2;
   }
   
@@ -175,7 +178,7 @@ class Snake
   
   void snakeMove(int head_x,int head_y,Direction direction)
   {
-  	int count=0;
+  	int count=0,old_direction;
   	bool go= true;
   	while(go)
   	{
@@ -183,7 +186,7 @@ class Snake
   	
 Sleep ( 1000 );
   		
-  
+    old_direction=direction;
   	
   	getInput(head_x);
   	
@@ -197,7 +200,7 @@ Sleep ( 1000 );
     switch(direction)
     {
     	case UP:
-		   if(direction != DOWN )
+		   if(old_direction != DOWN )
 		{
 			
 			SnakeSegment.push(&face[head_x][head_y-1]);
@@ -214,9 +217,35 @@ Sleep ( 1000 );
 			
 			*SnakeSegment.back()=1;
 		}
-	}
+	
 		head_y=head_y-1;
+	}
+	
+	else{
+		  SnakeSegment.push(&face[head_x][head_y+1]);
+			if(!hasEaten())
+			{
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
+			SnakeSegment.pop();
+		   }
+		  
+		   
+		
+		else
+		{
+			
+			*SnakeSegment.back()=1;
+		}
+	  
+		head_y=head_y+1;
+     }
 		break;
+		
+		
+		
+		
+		
 		
 		
 		case DOWN:
@@ -235,12 +264,44 @@ Sleep ( 1000 );
 		
 		else
 		{
+		  	
+			*SnakeSegment.back()=1;
+		}
+	  
+		head_y=head_y+1;
+	  }
+	  
+	  else
+	  {
+	    	SnakeSegment.push(&face[head_x][head_y-1]);
+			
+			if(!hasEaten())
+			{
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
+			SnakeSegment.pop();
+	        }
+		
+		else
+		{
 			
 			*SnakeSegment.back()=1;
 		}
-	  }
-		head_y=head_y+1;
+	
+		head_y=head_y-1;
+	}
+		
+	  
 		break;
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		case RIGHT:
@@ -268,8 +329,38 @@ Sleep ( 1000 );
 			
 			*SnakeSegment.back()=1;
 		}
-	}
+	
 		head_x=head_x-1;
+	}
+	
+	else{
+		if(head_x==0)
+			{
+				SnakeSegment.push(&face[31][head_y]);
+			}
+			else 
+			{
+				SnakeSegment.push(&face[head_x-1][head_y]);
+			}
+			
+			if(!hasEaten())
+			{
+			
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
+			SnakeSegment.pop();
+		    }
+		  
+		
+		else
+		{
+			
+			
+			*SnakeSegment.back()=1;
+		}
+	}
+		head_x=head_x+1;
+	
 		break;
 		
 		case LEFT:
@@ -299,9 +390,40 @@ Sleep ( 1000 );
 			
 			*SnakeSegment.back()=1;
 		}
-	}
+	
 		head_x=head_x+1;
+     }
+     
+     else{
+     	if(head_x==31)
+			{
+				SnakeSegment.push(&face[0][head_y]);
+			}
+			else 
+			{
+				SnakeSegment.push(&face[head_x+1][head_y]);
+			}
+			if(!hasEaten())
+			{
+			*SnakeSegment.back()=1;
+			*SnakeSegment.front()=0;
+			SnakeSegment.pop();
+		   }
+		 
+		
+		else
+		{
+			
+			
+			*SnakeSegment.back()=1;
+		}
+	
+		head_x=head_x-1;
+     }
 		break;
+		
+		
+		
     
     head=SnakeSegment.back();
     count++;
