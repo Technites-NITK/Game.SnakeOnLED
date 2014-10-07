@@ -10,7 +10,7 @@ using namespace std;
 enum Direction {RIGHT,LEFT,UP,DOWN};
 
 
-void print(int array[][32]);
+
 class Snake
 {
 	queue<int* > SnakeSegment;
@@ -25,28 +25,28 @@ class Snake
   
          if(direction==RIGHT)
          {
-          if(face[head_x+1][head_y]==1)
+          if(face[head_y][head_x+1]==1)
 		  return true;
 		  else
 		  return false;	
          }
 		 if(direction==LEFT)
 		 {
-		 	if(face[head_x-1][head_y]==1)
+		 	if(face[head_y][head_x-1]==1)
 		  return true;
 		  else
 		  return false;
 		 }
 		 if(direction==UP)
 		 {
-		 	if(face[head_x][head_y-1]==1)
+		 	if(face[head_y-1][head_x]==1)
 		  return true;
 		  else
 		  return false;
 		 }
 		 if(direction==DOWN)
 		 {
-		 	if(face[head_x][head_y+1]==1)
+		 	if(face[head_y+1][head_x]==1)
 		  return true;
 		  else
 		  return false;
@@ -60,10 +60,10 @@ class Snake
   	int x,y;
   	x=rand()%32;
   	y=rand()%8;
-  	if(face[x][y]==1)
+  	if(face[y][x]==1)
   	void fruit();
   	else
-  	face[x][y]=2;
+  	face[y][x]=2;
   }
   
   bool hasEaten()
@@ -85,20 +85,14 @@ class Snake
   		face[i][j]=0;
   	}
   
-	 /*	for(int k=0;k<8;k++)
-  {
-  	for(int l=0;l<32;l++)
-  	cout<<face[k][l];
-  	cout<<endl;
-  } 
-	  */
-	  y=(rand()%25)+3,x=(rand()%2)+3;
+	 
+	  x=(rand()%25)+3,y=(rand()%2)+3;
 
   	  
   	 
-  	  //cout<<"x="<<x<<"y="<<y;
+  	  cout<<"x="<<x<<"y="<<y;
   	
-	  SnakeSegment.push(face[x]+y);
+	  SnakeSegment.push(face[y]+x);
   	*SnakeSegment.back()=1;
   	
   	direction=static_cast <Direction>(rand()%4);
@@ -108,9 +102,9 @@ class Snake
 	  		case UP:
 		   
 		
-			SnakeSegment.push(&face[x][y-1]);
+			SnakeSegment.push(&face[y-1][x]);
 			*SnakeSegment.back()=1;
-			SnakeSegment.push(&face[x][y-2]);
+			SnakeSegment.push(&face[y-2][x]);
 			*SnakeSegment.back()=1;			
 		 
 		
@@ -120,9 +114,9 @@ class Snake
 		case DOWN:
 		     
 	
-			SnakeSegment.push(&face[x][y+1]);
+			SnakeSegment.push(&face[y+1][x]);
 			*SnakeSegment.back()=1;
-			SnakeSegment.push(&face[x][y+2]);
+			SnakeSegment.push(&face[y+2][x]);
 			*SnakeSegment.back()=1;
 		
 		
@@ -134,9 +128,9 @@ class Snake
 		case RIGHT:
 		     
 	
-			SnakeSegment.push(&face[x+1][y]);
+			SnakeSegment.push(&face[y][x+1]);
 			*SnakeSegment.back()=1;
-			SnakeSegment.push(&face[x+2][y]);
+			SnakeSegment.push(&face[y][x+2]);
 			*SnakeSegment.back()=1;
 		
 		
@@ -145,9 +139,9 @@ class Snake
 		
 		case LEFT:
 		 
-			SnakeSegment.push(&face[x-1][y]);
+			SnakeSegment.push(&face[y][x-1]);
 			*SnakeSegment.back()=1;
-			SnakeSegment.push(&face[x-2][y]);
+			SnakeSegment.push(&face[y][x-2]);
 			*SnakeSegment.back()=1;
 		
 	
@@ -155,6 +149,13 @@ class Snake
     
 	  	
 	  } 
+	  	for(int k=0;k<8;k++)
+  {
+  	for(int l=0;l<32;l++)
+  	cout<<face[k][l];
+  	cout<<endl;
+  } 
+	  
   
   	length=3;
   	head=SnakeSegment.back();
@@ -192,16 +193,58 @@ class Snake
   	
   	if(8<=head_x<=15)
   	{//player 2 control
+  	if(kbhit())// check if keyboard key is pressed
+            {
+             switch(getch())
+             {
+             case 'w':direction=UP;
+             break;
+             case 's':direction=DOWN;
+             break; 
+             case 'a':direction=LEFT;
+             break;
+             case 'd':direction=RIGHT;
+             break;	//player 1 control
+  	}
+  }
     }
     
     if(16<=head_x<=23)
     {
     	//player 3 control
+    	if(kbhit())// check if keyboard key is pressed
+            {
+             switch(getch())
+             {
+             case 'w':direction=UP;
+             break;
+             case 's':direction=DOWN;
+             break; 
+             case 'a':direction=LEFT;
+             break;
+             case 'd':direction=RIGHT;
+             break;	//player 1 control
+  	}
+  }
     }
     
     if(24<=head_x<=31)
     {
     	//player 4 control
+    	if(kbhit())// check if keyboard key is pressed
+            {
+             switch(getch())
+             {
+             case 'w':direction=UP;
+             break;
+             case 's':direction=DOWN;
+             break; 
+             case 'a':direction=LEFT;
+             break;
+             case 'd':direction=RIGHT;
+             break;	//player 1 control
+  	}
+  }
     }
     	
   }
@@ -234,7 +277,7 @@ Sleep ( 1000 );
 		   if(old_direction != DOWN )
 		{
 			
-			SnakeSegment.push(&face[head_x][head_y-1]);
+			SnakeSegment.push(&face[head_y-1][head_x]);
 			
 			if(!hasEaten())
 			{
@@ -253,7 +296,7 @@ Sleep ( 1000 );
 	}
 	
 	else{
-		  SnakeSegment.push(&face[head_x][head_y+1]);
+		  SnakeSegment.push(&face[head_y+1][head_x]);
 			if(!hasEaten())
 			{
 			*SnakeSegment.back()=1;
@@ -283,7 +326,7 @@ Sleep ( 1000 );
 			
 		      if(old_direction != UP)
 		{
-			SnakeSegment.push(&face[head_x][head_y+1]);
+			SnakeSegment.push(&face[head_y+1][head_x]);
 			if(!hasEaten())
 			{
 			*SnakeSegment.back()=1;
@@ -304,7 +347,7 @@ Sleep ( 1000 );
 	  
 	  else
 	  {
-	    	SnakeSegment.push(&face[head_x][head_y-1]);
+	    	SnakeSegment.push(&face[head_y-1][head_x]);
 			
 			if(!hasEaten())
 			{
@@ -340,11 +383,11 @@ Sleep ( 1000 );
 		{
 			if(head_x==31)
 			{
-				SnakeSegment.push(&face[0][head_y]);
+				SnakeSegment.push(&face[head_y][0]);
 			}
 			else 
 			{
-				SnakeSegment.push(&face[head_x+1][head_y]);
+				SnakeSegment.push(&face[head_y][head_x+1]);
 			}
 			if(!hasEaten())
 			{
@@ -361,17 +404,17 @@ Sleep ( 1000 );
 			*SnakeSegment.back()=1;
 		}
 	
-		head_x=head_x-1;
+		head_x=head_x+1;
 	}
 	
 	else{
 		if(head_x==0)
 			{
-				SnakeSegment.push(&face[31][head_y]);
+				SnakeSegment.push(&face[head_y][31]);
 			}
 			else 
 			{
-				SnakeSegment.push(&face[head_x-1][head_y]);
+				SnakeSegment.push(&face[head_y][head_x-1]);
 			}
 			
 			if(!hasEaten())
@@ -390,20 +433,26 @@ Sleep ( 1000 );
 			*SnakeSegment.back()=1;
 		}
 	}
-		head_x=head_x+1;
+		head_x=head_x-1;
 	
 		break;
+		
+		
+		
+		
+		
+		
 		
 		case LEFT:
 		  if(old_direction != RIGHT)
 		{
 				if(head_x==0)
 			{
-				SnakeSegment.push(&face[31][head_y]);
+				SnakeSegment.push(&face[head_y][31]);
 			}
 			else 
 			{
-				SnakeSegment.push(&face[head_x-1][head_y]);
+				SnakeSegment.push(&face[head_y][head_x-1]);
 			}
 			
 			if(!hasEaten())
@@ -422,17 +471,17 @@ Sleep ( 1000 );
 			*SnakeSegment.back()=1;
 		}
 	
-		head_x=head_x+1;
+		head_x=head_x-1;
      }
      
      else{
      	if(head_x==31)
 			{
-				SnakeSegment.push(&face[0][head_y]);
+				SnakeSegment.push(&face[head_y][0]);
 			}
 			else 
 			{
-				SnakeSegment.push(&face[head_x+1][head_y]);
+				SnakeSegment.push(&face[head_y][head_x+1]);
 			}
 			if(!hasEaten())
 			{
@@ -449,7 +498,7 @@ Sleep ( 1000 );
 			*SnakeSegment.back()=1;
 		}
 	
-		head_x=head_x-1;
+		head_x=head_x+1;
      }
 		break;
 		
@@ -485,12 +534,4 @@ int main()
 }
 
 
-void print(int array[][32])
-{
-	for(int k=0;k<8;k++)
-  {
-  	for(int l;l<32;l++)
-  	cout<<array[k][l];
-  	cout<<endl;
-  }
-}
+
