@@ -2,13 +2,18 @@
 #include<cstdlib>
 #include<windows.h>
 #include<queue>
+#include<conio.h>
+
+
 using namespace std;
 
 enum Direction {RIGHT,LEFT,UP,DOWN};
 
+
+void print(int array[][32]);
 class Snake
 {
-	queue<int*> SnakeSegment;
+	queue<int* > SnakeSegment;
 
 	Direction direction;
 	int* head;
@@ -79,14 +84,26 @@ class Snake
   		for(int j=0;j<32;j++)
   		face[i][j]=0;
   	}
-  	
-	  x=(rand()%25)+3,y=(rand()%2)+3;
+  
+	 /*	for(int k=0;k<8;k++)
+  {
+  	for(int l=0;l<32;l++)
+  	cout<<face[k][l];
+  	cout<<endl;
+  } 
+	  */
+	  y=(rand()%25)+3,x=(rand()%2)+3;
+
   	  
-  	SnakeSegment.push(&face[x][y]);
+  	 
+  	  //cout<<"x="<<x<<"y="<<y;
+  	
+	  SnakeSegment.push(face[x]+y);
   	*SnakeSegment.back()=1;
+  	
   	direction=static_cast <Direction>(rand()%4);
   	
-  	switch(direction)
+ 	switch(direction)
 	  {
 	  		case UP:
 		   
@@ -137,7 +154,7 @@ class Snake
 		break;
     
 	  	
-	  }
+	  } 
   
   	length=3;
   	head=SnakeSegment.back();
@@ -149,6 +166,7 @@ class Snake
   	snakeMove(x,y-2,UP);
   	else if(direction==DOWN)
   	snakeMove(x,y+2,DOWN);
+  	
   }
   
   void getInput(int head_x)
@@ -156,8 +174,21 @@ class Snake
   	//convert the key input into direction
     if (0<=head_x<=7)
   	{
-  		//player 1 control
+  	    if(kbhit())// check if keyboard key is pressed
+            {
+             switch(getch())
+             {
+             case 'w':direction=UP;
+             break;
+             case 's':direction=DOWN;
+             break; 
+             case 'a':direction=LEFT;
+             break;
+             case 'd':direction=RIGHT;
+             break;	//player 1 control
   	}
+  }
+}
   	
   	if(8<=head_x<=15)
   	{//player 2 control
@@ -250,7 +281,7 @@ Sleep ( 1000 );
 		
 		case DOWN:
 			
-		      if(direction != UP)
+		      if(old_direction != UP)
 		{
 			SnakeSegment.push(&face[head_x][head_y+1]);
 			if(!hasEaten())
@@ -305,7 +336,7 @@ Sleep ( 1000 );
 		
 		
 		case RIGHT:
-		     if(direction != LEFT)
+		     if(old_direction != LEFT)
 		{
 			if(head_x==31)
 			{
@@ -364,7 +395,7 @@ Sleep ( 1000 );
 		break;
 		
 		case LEFT:
-		  if(direction != RIGHT)
+		  if(old_direction != RIGHT)
 		{
 				if(head_x==0)
 			{
@@ -430,6 +461,12 @@ Sleep ( 1000 );
   	if(count%5==0)
   	fruit();
   }
+  for(int k=0;k<8;k++)
+  {
+  	for(int l=0;l<32;l++)
+  	cout<<face[k][l];
+  	cout<<endl;
+  }
 }
 }
 };
@@ -445,4 +482,15 @@ int main()
 
 
 	
+}
+
+
+void print(int array[][32])
+{
+	for(int k=0;k<8;k++)
+  {
+  	for(int l;l<32;l++)
+  	cout<<array[k][l];
+  	cout<<endl;
+  }
 }
