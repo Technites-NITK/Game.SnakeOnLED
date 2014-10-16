@@ -1,14 +1,13 @@
 #include<iostream>
 #include<cstdlib>
-#include<windows.h>
+#include<time.h>
 #include<queue>
-#include<conio.h>
-
-
+#include<SerialStream.h>
+#include<unistd.h>
 using namespace std;
+using namespace LibSerial;
 
 enum Direction {RIGHT,LEFT,UP,DOWN};
-
 
 
 class Snake
@@ -20,7 +19,65 @@ class Snake
 	int length;
   int face[8][32];
   int x,y,fruit_count,flag;
-	
+  SerialStream serial_stream;
+
+  void portInit()
+  {
+    serial_stream.Open("/dev/ttyACM2");
+    serial_stream.SetBaudRate(SerialStreamBuf::BAUD_9600);
+    serial_stream.SetCharSize( SerialStreamBuf::CHAR_SIZE_8 ) ;
+    serial_stream.SetNumOfStopBits(1) ;
+    serial_stream.SetParity( SerialStreamBuf::PARITY_NONE ) ;
+    serial_stream.SetFlowControl( SerialStreamBuf::FLOW_CONTROL_NONE ) ;
+    if(!serial_stream.good())
+    {
+        printf("Error in opening port - Try sudo \n");
+    }
+  }
+
+void writeFrame()
+{
+    int i,j;
+    unsigned char byteStream[32];
+
+    for(i=0;i<32;i++)
+    {
+        byteStream[i]=0;
+    }
+
+    for(i=0;i<8;i++)
+    {
+        for(j=0;j<32;j++)
+        {
+            if (face[i][j]==1)
+            {
+                byteStream[j]=byteStream[j]|(1<<(7-i));
+                printf("i=%d j=%d\n",i,j);
+            }
+        }
+    }
+    char ack;
+    serial_stream <<'S';
+    printf("Wrote S\n");
+    do
+    {
+        serial_stream >> ack;
+    }
+    while(ack!='k');
+    printf("Ack for s recieved as %c\n",ack);
+    for(i=0;i<8;i++)
+    {
+        serial_stream<<byteStream[i];
+        printf("Wrote %d \n",byteStream[i]);
+    }
+    do
+    {
+        serial_stream >> ack;
+        printf("Ack recieved as %c\n",ack);
+    }
+    while(ack!='R');
+}
+
   bool isColliding(int head_x,int head_y,Direction direction)
   {
   	//cout<<direction<<endl;
@@ -65,7 +122,7 @@ class Snake
   
   
   void fruit()
-  {
+{
   	
   	x=rand()%32;
   	y=rand()%8;
@@ -115,7 +172,7 @@ class Snake
   		face[i][j]=0;
   	}
   
-	 
+	portInit(); 
 	  x=(rand()%25)+3,y=(rand()%2)+3;
 
   	  
@@ -200,87 +257,7 @@ class Snake
   	
   }
   
- /* void getInput(int head_x)
-  {
-  	//convert the key input into direction
-    if (0<=head_x<=7)
-  	{
-  	    if(kbhit())// check if keyboard key is pressed
-            {
-             switch(getch())
-             {
-             case 'w':direction=UP;
-             break;
-             case 's':direction=DOWN;
-             break; 
-             case 'a':direction=LEFT;
-             break;
-             case 'd':direction=RIGHT;
-             break;	//player 1 control
-  	}
-  }
-}
-  	
-  	if(8<=head_x<=15)
-  	{//player 2 control
-  	if(kbhit())// check if keyboard key is pressed
-            {
-             switch(getch())
-             {
-             case 'w':direction=UP;
-             break;
-             case 's':direction=DOWN;
-             break; 
-             case 'a':direction=LEFT;
-             break;
-             case 'd':direction=RIGHT;
-             break;	//player 1 control
-  	}
-  }
-    }
-    
-    if(16<=head_x<=23)
-    {
-    	//player 3 control
-    	if(kbhit())// check if keyboard key is pressed
-            {
-             switch(getch())
-             {
-             case 'w':direction=UP;
-             break;
-             case 's':direction=DOWN;
-             break; 
-             case 'a':direction=LEFT;
-             break;
-             case 'd':direction=RIGHT;
-             break;	//player 1 control
-  	}
-  }
-    }
-    
-    if(24<=head_x<=31)
-    {
-    	//player 4 control
-    	if(kbhit())// check if keyboard key is pressed
-            {
-             switch(getch())
-             {
-             case 'w':direction=UP;
-             break;
-             case 's':direction=DOWN;
-             break; 
-             case 'a':direction=LEFT;
-             break;
-             case 'd':direction=RIGHT;
-             break;	//player 1 control
-  	}
-  }
-    }
-    	
-  }
-  
- */ 
-  void snakeMove(int head_x,int head_y,Direction direction)
+   void snakeMove(int head_x,int head_y,Direction direction)
   {
   	int count=0,old_direction;
   	fruit_count=0;
@@ -288,35 +265,33 @@ class Snake
   	while(go)
   	{
   		
-  	
-Sleep ( 500 );
+    	
+usleep ( 1000000 );
   		
     old_direction=direction;
   	
   	//getInput(head_x);
-  	if(kbhit())// check if keyboard key is pressed
-            {
-             switch(getch())
-             {
-             case 'w':direction=UP;
-             if(old_direction==DOWN)
-             direction=DOWN;
-             break;
-             case 's':direction=DOWN;
-             if(old_direction==UP)
-             direction=UP;
-             break; 
-             case 'a':direction=LEFT;
-             if(old_direction==RIGHT)
-             direction=RIGHT;
-             break;
-             case 'd':direction=RIGHT;
-             if(old_direction==LEFT)
-             direction=LEFT;
-             break;	//player 1 control
+    char inpDirection='u';
+    //serial_stream >> inpDirection;
+     switch(inpDirection)
+     {
+         case 'u':direction=UP;
+            if(old_direction==DOWN)
+            direction=DOWN;
+            break;
+         case 'd':direction=DOWN;
+            if(old_direction==UP)
+            direction=UP;
+            break; 
+         case 'l':direction=LEFT;
+            if(old_direction==RIGHT)
+            direction=RIGHT;
+            break;
+         case 'r':direction=RIGHT;
+            if(old_direction==LEFT)
+            direction=LEFT;
+            break;	//player 1 control
   	}
-  }
-  	
   		if(isColliding(head_x,head_y,direction)||(head_y==0&&direction==UP)||(head_y==7&&direction==DOWN))
   	{
   		cout<<"game over";
@@ -337,8 +312,7 @@ Sleep ( 500 );
 			*SnakeSegment.back()=1;
 			*SnakeSegment.front()=0;
 			SnakeSegment.pop();
-	        }
-		
+	        }	
 		else
 		{
 			
@@ -491,6 +465,7 @@ Sleep ( 500 );
   }
   
   cout<<endl<<endl;
+  writeFrame();
 }
 }
 };
@@ -501,12 +476,5 @@ int main()
 //	Direction direction;
   //   int head_x,head_y;
 	saap.snakeInit();
-
 //saap.snakeMove(3,2,direction);
-
-
-	
 }
-
-
-
